@@ -48,11 +48,11 @@ def in_range(landm):
 
 def pose_est(landm, img):
     text = "unknown"
-    if (in_range(landm[12]) and in_range(landm[24]) and in_range(landm[26])):
-        if (in_range(landm[11]) and in_range(landm[23]) and in_range(landm[25])):
-            if 120 > abs(find_angle(landm, 12, 24, 26) and abs(find_angle(landm, 11, 23, 25))):
+    if in_range(landm[12]) == 1 and in_range(landm[24]) == 1 and in_range(landm[26]) == 1:
+        if in_range(landm[11]) == 1 and in_range(landm[23]) == 1 and in_range(landm[25]) == 1:
+            if 120 > abs(find_angle(landm, 12, 24, 26)) and 120 > abs(find_angle(landm, 11, 23, 25)):
                 text ="sitting"
-            elif 150 < abs(find_angle(landm, 12, 24, 26) and abs(find_angle(landm, 11, 23, 25))):
+            elif 150 < abs(find_angle(landm, 12, 24, 26)) and 120 < abs(find_angle(landm, 11, 23, 25)):
                 text ="standing"
         else:
             if 120 > abs(find_angle(landm, 12, 24, 26)):
