@@ -46,24 +46,37 @@ def in_range(landm):
         return 1
     return 0
 
-def pose_est(landm, img):
+def pose_est(landm):
     text = "unknown"
     if in_range(landm[12]) == 1 and in_range(landm[24]) == 1 and in_range(landm[26]) == 1:
+        ang1 = abs(find_angle(landm, 12, 24, 26))
         if in_range(landm[11]) == 1 and in_range(landm[23]) == 1 and in_range(landm[25]) == 1:
-            if 120 > abs(find_angle(landm, 12, 24, 26)) and 120 > abs(find_angle(landm, 11, 23, 25)):
+            ang2 = abs(find_angle(landm, 11, 23, 25))
+            if ang1 > 180:
+                ang1 = abs(360-ang1)
+                print(ang1)
+            if ang2 > 180:
+                ang2 = abs(360-ang2)
+                print(ang2)
+            if 120 > ang1 and 120 > ang2:
                 text ="sitting"
-            elif 150 < abs(find_angle(landm, 12, 24, 26)) and 120 < abs(find_angle(landm, 11, 23, 25)):
+            elif 150 < ang1 and 150 < ang2:
                 text ="standing"
         else:
-            if 120 > abs(find_angle(landm, 12, 24, 26)):
+            if 120 > ang1:
                 text = "sitting"
-            elif 150 < abs(find_angle(landm, 12, 24, 26)):
+            elif 150 < ang1:
                 text = "standing"
     elif (in_range(landm[11]) and in_range(landm[23]) and in_range(landm[25])):
-        if 120 > abs(find_angle(landm, 11, 23, 25)):
+        ang2 = abs(find_angle(landm, 11, 23, 25))
+        if ang2 > 180:
+            ang2 = abs(360 - ang2)
+            print(ang2)
+        if 131 > ang2:
             text = "sitting"
-        elif 150 < abs(find_angle(landm, 11, 23, 25)):
+        elif 150 < ang2:
             text = "standing"
+    return text
     cv2.putText(img, text, (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
 
@@ -73,11 +86,11 @@ if __name__ == "__main__":
     while cam.isOpened():
         success, img = cam.read()
         img = cv2.flip(img, 1, 0)
-        print(img.shape)
         img = detector.find_config(img)
         landm = detector.find_keypoint(img)
         if (landm):
-            pose_est(landm, img)
+            text = pose_est(landm)
+            cv2.putText(img, text, (30, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
         cv2.imshow("Image", img)
         if cv2.waitKey(1) & 0xff == ord('q'):
             break
